@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>21 Game</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <style>
+        body {
+            background: url('7.png') no-repeat center center fixed;
+            -webkit-background-size: cover;
+            -moz-background-size: cover;
+            -o-background-size: cover;
+            background-size: cover;
+        }
+        
+        a {
+            color: #00291c;
+        }
+        
+        a:hover {
+            text-decoration: none;
+            cursor: pointer;
+            color: white;
+        }
+        
+        .child {
+            display: inline-block;
+            margin: 10px 0 0 10px;
+            flex-grow: 1;
+            height: 82px;
+            width: 102px;
+            background: #eee4da;
+            border: 1px solid white;
+            border-radius: 8px;
+            /* one half of ( (border * 2) + height + padding ) */
+            box-shadow: 1px 1px 1px #8e8379;
+            font-size: 30px;
+            padding: 30px 64px 0 3px;
+        }
+        
+        .child:nth-child(21) {
+            margin-left: 41%;
+            background: transparent;
+            color: red;
+        }
+        
+        .child:nth-child(n+1) {
+            pointer-events: none;
+            cursor: default;
+        }
+        
+        .child:nth-child(n+1):nth-child(-n+3) {
+            background: rgb(23, 155, 96);
+            pointer-events: auto;
+            cursor: pointer;
+        }
+        
+        .plate {
+            background-color: black;
+            opacity: 0.9;
+            padding: 0;
+            max-width: 585px;
+            border: 1px solid white;
+            padding: 10px 0;
+        }
+        
+        .number {
+            position: relative;
+            top: -32%;
+            left: 70%;
+            font-size: 40px;
+        }
+        
+        .instruction {
+            border-radius: 5px;
+            opacity: 0.9;
+        }
+        
+        .mode {
+            width: 50%;
+            margin: 0 auto;
+        }
+        
+        .screen {
+            margin-top: 4%;
+        }
+        
+        .instruction #rules {
+            padding: 15px 8px;
+        }
+        
+        .mode form {
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #007743;
+        }
+        
+        input[type="radio"] {
+            -webkit-appearance: checkbox;
+            /* Chrome, Safari, Opera */
+            -moz-appearance: checkbox;
+            /* Firefox */
+            -ms-appearance: checkbox;
+            /* not currently supported */
+        }
+        
+        #image {
+            width: 100%;
+            height: 100%;
+            color: white;
+            text-align: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            transition: all 0.5s;
+            z-index: 11;
+        }
+        
+        #go {
+            margin-top: 10%;
+        }
+        
+        #image #go span {
+            font-size: 60px;
+            color: white;
+            font-weight: bold;
+            text-align: center;
+            text-indent: 0;
+        }
+        
+        #image.hidden {
+            visibility: hidden;
+            transform: scale(0.5);
+        }
+        
+        .again {
+            font-size: 36px;
+            padding: 0px 20px;
+        }
+        
+        .again:hover {}
+
+        /**************for toss screen***************/
+
+        #starting{width: 100%;
+            height: 100%;
+            color: white;
+            text-align: center;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            transition: all 0.5s;
+            z-index: 11;}
+#gameName{font-family: 'Stencil Std', fantasy;text-shadow: 2px 2px #b9f3b5;}            
+h1{margin-bottom: 50px;}
+.head{margin:-186px 0 0 5px; }
+#result{display: none;color:rgb(242, 255, 64);font-family: Verdana, sans-serif}
+.coinBox{display: none;}
+.flip img{animation: flipIt 1s linear infinite;}
+.head img{animation-delay: 0.5s;}
+@keyframes flipIt{
+    0%{width:0px;height: 188px;}
+    25%{width:188px;height: 188px;}
+    50%{width:0px;height: 188px;}
+    100%{width:0px;height: 188px;}
+}
+
+#starting h1{color:#ff3333;font-family: 'Snell Roundhand', cursive;}
+
+
+    </style>
+
+</head>
+
+<body>
+
+    <div class="container">
+        <div id="starting">
+            <div class="col-md-12">
+                    <h1>Toss For Turn</h1>
+                    <div class="col-md-offset-4 col-md-4">
+                        <div class="userChoice">
+                        <form>   
+                            <div class="form-group">
+                                <a href="#" id="inputHead"><img src="head.png"/></a>
+                            </div>
+                            <div class="form-group">
+                                <a href="#" id="inputTail"><img src="tail.png"/></a>
+                            </div>
+                        </form>
+                    </div>
+                        <div class="coinBox">
+                            <div class="tail">
+                                <img src="tail.png"/>
+                            </div>
+                            <div class="head "> 
+                                <img src="head.png"/>
+                            </div>
+                        </div>
+                        
+                            <div id="result">
+                                <h2 id="resultMsg" class="text">You Won The Toss</h2>
+                            </div>
+                    </div>
+                    
+                </div>
+        </div>
+        <div id="image" class="hidden">
+            <div id="go"> <span id="gameMsg"></span>
+                <br>
+                <button class="btn btn-lg btn-danger again" onclick="replay()">Play again </button>
+            </div>
+        </div>
+        <h1 id="gameName">21 Game </h1>
+        <div class="mode">
+            <div class="btn-group" data-toggle="buttons">
+                <label class="btn btn-warning">
+                    <input type="radio" name='mode' value="easy" id="easy"> Easy </label>
+                <label class="btn btn-success active">
+                    <input type="radio" name='mode' value="medium" id="medium" checked> Medium </label>
+                <label class="btn btn-danger">
+                    <input type="radio" name='mode' value="hard" id="hard"> Hard </label>
+            </div>
+        </div>
+        <div class="row screen">
+            <div class="col-md-3 col-sm-12 col-xs-12">
+                <div class="panel panel-danger instruction">
+                    <div class="panel-heading"> Rules: </div>
+                    <div class="panel-body" id="rules">
+                        <p>The player who choose no 21 will lose the Game.</p>
+                        <p>You can choose max from next three number</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 plate well col-sm-12 col-xs-12">
+                <a class="child" onclick="computer(0)" id="no0"><span class="number">01</span></a>
+                <a class="child" onclick="computer(1)" id="no1"><span class="number">02</span></a>
+                <a class="child" onclick="computer(2)" id="no2"><span class="number">03</span></a>
+                <a class="child" onclick="computer(3)" id="no3"><span class="number">04</span></a>
+                <a class="child" onclick="computer(4)" id="no4"><span class="number">05</span></a> 
+                <a class="child" onclick="computer(5)" id="no5"><span class="number">06</span></a> 
+                <a class="child" onclick="computer(6)" id="no6"><span class="number">07</span></a> 
+                <a class="child" onclick="computer(7)" id="no7"><span class="number">08</span></a>
+                <a class="child" onclick="computer(8)" id="no8"><span class="number">09</span></a> 
+                <a class="child" onclick="computer(9)" id="no9"><span class="number">10</span></a> 
+                <a class="child" onclick="computer(10)" id="no10"><span class="number">11</span></a> 
+                <a class="child" onclick="computer(11)" id="no11"><span class="number">12</span></a> 
+                <a class="child" onclick="computer(12)" id="no12"><span class="number">13</span></a> 
+                <a class="child" onclick="computer(13)" id="no13"><span class="number">14</span></a> 
+                <a class="child" onclick="computer(14)" id="no14"><span class="number">15</span></a> 
+                <a class="child" onclick="computer(15)" id="no15"><span class="number">16</span></a> 
+                <a class="child" onclick="computer(16)" id="no16"><span class="number">17</span></a> 
+                <a class="child" onclick="computer(17)" id="no17"><span class="number">18</span></a> 
+                <a class="child" onclick="computer(18)" id="no18"><span class="number">19</span></a> 
+                <a class="child" onclick="computer(19)" id="no19"><span class="number">20</span></a> 
+                <a class="child" onclick="computer(20)" id="no20"><span class="number">21</span></a> 
+            </div>
+        </div>
+    </div>
+    <script>
+    
+        let replay = function () {
+            $("#image").toggleClass("hidden");
+            fillColor(0);
+            $('#starting').css('display','block');
+            $('.userChoice').css('display','block');
+            $('.coinBox').css('display','none');
+            $('#result').css('display','none');
+        }
+        let pc = function () {
+                let k = Math.floor(Math.random() * 3) + 1;
+                fillColor(k);
+            }
+            //difficulty mode by user
+        var mode = 'medium';
+        $('input:radio[name="mode"]').change(function () {
+            mode = $("input[name='mode']:checked").val();
+            $('#starting').css('display','block');
+            $('.userChoice').css('display','block');
+            $('.coinBox').css('display','none');
+            $('#result').css('display','none');
+            fillColor(0);
+        });
+        let no = 0;
+        let computer = function (a) {
+            no = a + 1; //bcz of array index + 1
+            no = getRandomInt(no + 1); //get random no from next no
+            if (no === 21) {
+                document.getElementById('gameMsg').innerHTML ='You Win!';
+                document.getElementById('gameMsg').style.color = '#ecaa2c';
+                $("#image").toggleClass("hidden");
+            }
+            if (no === 20) {
+                document.getElementById('gameMsg').innerHTML = 'You Lose';
+                document.getElementById('gameMsg').style.color = '#fffff';
+                $("#image").toggleClass("hidden");
+            }
+            fillColor(no);
+        };
+
+        function getRandomInt(min) {
+            if (21 > min && min > 17) return 20;
+            let max = min + 2;
+            if (max > 21) max = 21;
+            //console.log('min',min,'max',max);
+            if (mode === 'easy') return Math.floor(Math.random() * (max - min + 1)) + min;
+            else if (mode === 'medium') return randomMedium(min, max);
+            else if (mode === 'hard') return randomHard(min, max);
+        }
+
+        function fillColor(no) {
+            //enable and color logic
+            // first disable click all buttons
+            $('.child:nth-child(n+1)').css({
+                "pointer-events": "none"
+                , "cursor": "default"
+            });
+            // yellow - yet to come 
+            let yellow = no + 3;
+            yellow = '.child:nth-child(n+' + yellow + ')';
+            $(yellow).css({
+                "background": "rgb(205, 193, 180)"
+            });
+            //green - available to select at present 
+            let s = no + 1;
+            let e = no + 3;
+            let green = ".child:nth-child(n+" + s + "):nth-child(-n+" + e + ")";
+            $(green).css({
+                "background": "rgb(23, 155, 96)"
+                , "pointerEvents": "auto"
+                , "cursor": "pointer"
+            });
+            //red - previous gone 
+            let red = '.child:nth-child(-n+' + no + ')';
+            $(red).css({
+                "background": "#eee4da"
+            });
+            // computer input 
+            let blue = '.child:nth-child(' + no + ')';
+            $(blue).css({
+                "background": "rgb(138, 197, 62)"
+            });
+        }
+        //logic for difficulty mode 
+        //medium mode ****************
+        function randomMedium(min, max) {
+            if (min <= 12 && max >= 12) return 12;
+            else if (min <= 16 && max >= 16) return 16;
+            else return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        function randomHard(min, max) {
+            if (min <= 4 && max >= 4) return 4;
+            else if (min <= 8 && max >= 8) return 8;
+            else if (min <= 12 && max >= 12) return 12;
+            else if (min <= 16 && max >= 16) return 16;
+            else return Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        /***************logic for toss***********/
+var result,userchoice;
+
+function finalResult(result,userchoice){
+
+    if(result == userchoice)
+        $('#resultMsg').html('You Win The Toss.<br> First turn is yours.');
+    else{
+        $('#resultMsg').html('You Loss The Toss.<br> Computer will go first.');
+        pc();
+    }
+    $('#result').css('display','block');
+    setTimeout(function(){
+        $('.coinBox').html('<div class="tail"><img src="tail.png"/></div><div class="head "><img src="head.png"/></div>');
+        $('#starting').css('display','none');
+    },2000);
+}
+
+$(document).on('click','#inputHead',function(){
+    userchoice = 'head';
+    startFlip();
+});
+$(document).on('click','#inputTail',function(){
+    userchoice = 'tail';
+    startFlip();
+});
+
+function startFlip(){
+    $('.userChoice').css('display','none');
+    $('.coinBox').css('display','block');
+    var flipr = $('.coinBox>div').addClass('flip');
+    var number = Math.floor(Math.random()*2);
+    setTimeout(function(){
+        flipr.removeClass('flip');
+        if(number){
+            result = 'head';
+            $('.coinBox').html('<img src="head.png"/>');
+            finalResult(result,userchoice);
+        }else{
+            result = 'tail';
+            $('.coinBox').html('<img src="tail.png"/>');
+            finalResult(result,userchoice);
+        }
+    },3000);
+}
+
+
+    </script>
+</body>
+
+</html>
